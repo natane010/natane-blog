@@ -13,7 +13,7 @@ const posts = (await getCollection('blog')).sort(
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ja">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
@@ -30,6 +30,16 @@ const posts = (await getCollection('blog')).sort(
 			}
 			ul li {
 				width: calc(50% - 1rem);
+				background: var(--bg-secondary);
+				padding: 1.5rem;
+				border-radius: 12px;
+				border: 1px solid var(--border-color);
+				transition: all 0.3s ease;
+			}
+			ul li:hover {
+				transform: translateY(-4px);
+				box-shadow: var(--glow-cyan);
+				border-color: var(--accent-primary);
 			}
 			ul li * {
 				text-decoration: none;
@@ -55,19 +65,19 @@ const posts = (await getCollection('blog')).sort(
 			}
 			.title {
 				margin: 0;
-				color: rgb(var(--black));
+				color: var(--text-primary);
 				line-height: 1;
 			}
 			.date {
 				margin: 0;
-				color: rgb(var(--gray));
+				color: var(--text-tertiary);
 			}
 			ul li a:hover h4,
 			ul li a:hover .date {
-				color: rgb(var(--accent));
+				color: var(--accent-primary);
 			}
 			ul a:hover img {
-				box-shadow: var(--box-shadow);
+				box-shadow: var(--shadow-lg);
 			}
 			@media (max-width: 720px) {
 				ul {
