@@ -20,6 +20,36 @@ const posts = (await getCollection('blog')).sort(
 			main {
 				width: 960px;
 			}
+			.search-container {
+				margin-bottom: 2rem;
+			}
+			.search-input {
+				width: 100%;
+				padding: 1rem 1.5rem;
+				font-size: 1rem;
+				background: var(--bg-secondary);
+				border: 2px solid var(--border-color);
+				border-radius: 8px;
+				color: var(--text-primary);
+				transition: all 0.3s ease;
+			}
+			.search-input:focus {
+				outline: none;
+				border-color: var(--accent-primary);
+				box-shadow: var(--glow-cyan);
+			}
+			.search-input::placeholder {
+				color: var(--text-tertiary);
+			}
+			.no-results {
+				text-align: center;
+				color: var(--text-secondary);
+				padding: 3rem 0;
+				display: none;
+			}
+			.no-results.show {
+				display: block;
+			}
 			ul {
 				display: flex;
 				flex-wrap: wrap;
@@ -100,10 +130,22 @@ const posts = (await getCollection('blog')).sort(
 		<Header />
 		<main>
 			<section>
-				<ul>
+				<div class="search-container">
+					<input
+						type="text"
+						id="search-input"
+						class="search-input"
+						placeholder="記事を検索..."
+						aria-label="記事を検索"
+					/>
+				</div>
+				<div id="no-results" class="no-results">
+					検索結果が見つかりませんでした
+				</div>
+				<ul id="blog-list">
 					{
 						posts.map((post) => (
-							<li>
+							<li data-title={post.data.title.toLowerCase()} data-description={post.data.description.toLowerCase()}>
 								<a href={`/blog/${post.id}/`}>
 									{post.data.heroImage && (
 										<Image width={720} height={360} src={post.data.heroImage} alt="" />
@@ -120,5 +162,38 @@ const posts = (await getCollection('blog')).sort(
 			</section>
 		</main>
 		<Footer />
+
+		<script>
+			const searchInput = document.getElementById('search-input') as HTMLInputElement;
+			const blogList = document.getElementById('blog-list') as HTMLUListElement;
+			const noResults = document.getElementById('no-results') as HTMLDivElement;
+			const blogItems = Array.from(blogList.querySelectorAll('li'));
+
+			searchInput.addEventListener('input', (e) => {
+				const searchTerm = (e.target as HTMLInputElement).value.toLowerCase().trim();
+
+				let visibleCount = 0;
+
+				blogItems.forEach((item) => {
+					const title = item.getAttribute('data-title') || '';
+					const description = item.getAttribute('data-description') || '';
+
+					if (title.includes(searchTerm) || description.includes(searchTerm)) {
+						item.style.display = '';
+						visibleCount++;
+					} else {
+						item.style.display = 'none';
+					}
+				});
+
+				if (visibleCount === 0 && searchTerm !== '') {
+					noResults.classList.add('show');
+					blogList.style.display = 'none';
+				} else {
+					noResults.classList.remove('show');
+					blogList.style.display = '';
+				}
+			});
+		</script>
 	</body>
 </html>
